@@ -6,15 +6,15 @@
 #include <time.h>
 
 /*colors*/
-#define ANSI_COLOR_PINK "\x1b[95m"
-#define ANSI_COLOR_RED "\x1b[31m"
-#define ANSI_COLOR_YELLOW "\x1b[33m"
-#define ANSI_COLOR_GRAY "\x1b[90m"
-#define ANSI_COLOR_YELLOW_BRIGHT "\x1b[93m"
-#define ANSI_COLOR_RESET "\x1b[0m"
-#define ANSI_UNDERLINE_RED "\x1b[4m\x1b[31m"
-#define ANSI_UNDERLINE_GREEN "\x1b[4m\x1b[32m"
-#define ANSI_RESET_ALL "\x1b[0m"
+#define ANSI_COLOR_PINK " \x1b[95m"
+#define ANSI_COLOR_RED " \x1b[31m"
+#define ANSI_COLOR_YELLOW " \x1b[33m"
+#define ANSI_COLOR_GRAY " \x1b[90m"
+#define ANSI_COLOR_YELLOW_BRIGHT " \x1b[93m"
+#define ANSI_COLOR_RESET " \x1b[0m"
+#define ANSI_UNDERLINE_RED " \x1b[4m\x1b[31m"
+#define ANSI_UNDERLINE_GREEN " \x1b[4m\x1b[32m"
+#define ANSI_RESET_ALL " \x1b[0m"
 
 /*constants*/
 #define MAX_ATTEMPTS 6
