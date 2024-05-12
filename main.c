@@ -268,7 +268,7 @@ int checkWin(char word[], char guessedLetters[]) {
 
 /*this function resizes the letter from uppercase to lowercase*/
 char resizeLetter(char letter) {
-    letter = tolower(letter);
+    return letter = tolower(letter);
 }
 
 /*this function resizes the word from uppercase to lowercase*/
@@ -282,8 +282,9 @@ void resizeWord(char word[], int length) {
 int checkCharacter(char letter) {
     if ((letter < 65 || letter > 90) && (letter < 97 || letter > 122)) {
         return 1;
+    }else{
+        return 0;
     }
-    return 0;
 }
 
 /*this function checks that characters outside of the uppercase and lowercase alphabet of a word are not entered*/
