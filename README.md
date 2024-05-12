@@ -9,6 +9,4 @@ a simple c implementation app hangman game;
 
 **3 >** `cd hangman-game`
 
-**4 >** `g++ -o main main.c`
-
-**5 >** `./main`
+**4 >** `./main`
