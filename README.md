@@ -1,5 +1,5 @@
 # hangman-game
-a simple c implementation app hangman game;
+a simulation of hangman-game in c;
 
 ---
 ## how to run 
