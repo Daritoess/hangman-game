@@ -6,15 +6,15 @@
 #include <time.h>
 
 /*colors*/
-#define ANSI_COLOR_PINK "\x1b[95m"
-#define ANSI_COLOR_RED "\x1b[31m"
-#define ANSI_COLOR_YELLOW "\x1b[33m"
-#define ANSI_COLOR_GRAY "\x1b[90m"
-#define ANSI_COLOR_YELLOW_BRIGHT "\x1b[93m"
-#define ANSI_COLOR_RESET "\x1b[0m"
-#define ANSI_UNDERLINE_RED "\x1b[4m\x1b[31m"
-#define ANSI_UNDERLINE_GREEN "\x1b[4m\x1b[32m"
-#define ANSI_RESET_ALL "\x1b[0m"
+#define ANSI_COLOR_PINK " \x1b[95m"
+#define ANSI_COLOR_RED " \x1b[31m"
+#define ANSI_COLOR_YELLOW " \x1b[33m"
+#define ANSI_COLOR_GRAY " \x1b[90m"
+#define ANSI_COLOR_YELLOW_BRIGHT " \x1b[93m"
+#define ANSI_COLOR_RESET " \x1b[0m"
+#define ANSI_UNDERLINE_RED " \x1b[4m\x1b[31m"
+#define ANSI_UNDERLINE_GREEN " \x1b[4m\x1b[32m"
+#define ANSI_RESET_ALL " \x1b[0m"
 
 /*constants*/
 #define MAX_ATTEMPTS 6
@@ -47,7 +47,7 @@ int main() {
     int repeatedWordCount = 0;
     int length, gameChoice;
 
-    printf(ANSI_COLOR_GRAY"Welcome to the Hangman game\n\n"ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_GRAY "Welcome to the Hangman game\n\n" ANSI_COLOR_RESET);
     menu();
     gameChoice = startGame(gameChoice);
 
@@ -59,7 +59,7 @@ int main() {
             length = strlen(word);
             if (checkWordCharacters(word, length) == 1) {
                 refresh();
-                printf(ANSI_UNDERLINE_RED"The word contains characters not suitable for the game. Enter a word that contains alphabet letters!\n"ANSI_COLOR_RESET);
+                printf(ANSI_UNDERLINE_RED "The word contains characters not suitable for the game. Enter a word that contains alphabet letters!\n" ANSI_COLOR_RESET);
             }
         } while (checkWordCharacters(word, length) == 1);
 
@@ -71,13 +71,13 @@ int main() {
         while (remainingAttempts > 0 && !checkWin(word, guessedLetters)) {
             do {
                 hangingMan(remainingAttempts);
-                printf(ANSI_COLOR_YELLOW_BRIGHT"\nWord: %s\n"ANSI_COLOR_RESET, guessedLetters);
+                printf(ANSI_COLOR_YELLOW_BRIGHT "\nWord: %s\n" ANSI_COLOR_RESET, guessedLetters);
 
                 letter = enterLetter();
 
                 if (checkCharacter(letter) == 1) {
                     refresh();
-                    printf(ANSI_UNDERLINE_RED"The character entered is not suitable for the game. Enter an alphabet letter!\n"ANSI_RESET_ALL);
+                    printf(ANSI_UNDERLINE_RED "The character entered is not suitable for the game. Enter an alphabet letter!\n" ANSI_RESET_ALL);
                 }
             } while (checkCharacter(letter) == 1);
 
@@ -85,7 +85,7 @@ int main() {
 
             if (letterAlreadyGuessed(letter, previouslyGuessedLetters, repeatedWordCount)) {
                 refresh();
-                printf(ANSI_UNDERLINE_RED"You have already entered this letter previously. Enter another letter!\n"ANSI_RESET_ALL);
+                printf(ANSI_UNDERLINE_RED "You have already entered this letter previously. Enter another letter!\n" ANSI_RESET_ALL);
                 continue;
             }
 
@@ -94,11 +94,11 @@ int main() {
 
             if (checkLetter(letter, word, length)) {
                 refresh();
-                printf(ANSI_COLOR_YELLOW_BRIGHT"The letter "ANSI_COLOR_RESET ANSI_UNDERLINE_GREEN"'%c'"ANSI_RESET_ALL ANSI_COLOR_YELLOW_BRIGHT" is present!\n"ANSI_COLOR_RESET, letter);
+                printf(ANSI_COLOR_YELLOW_BRIGHT "The letter " ANSI_COLOR_RESET ANSI_UNDERLINE_GREEN "'%c'" ANSI_RESET_ALL ANSI_COLOR_YELLOW_BRIGHT " is present!\n" ANSI_COLOR_RESET, letter);
                 updateGuessedLetters(letter, word, guessedLetters, length);
             } else {
                 refresh();
-                printf(ANSI_COLOR_YELLOW_BRIGHT"The letter "ANSI_COLOR_RESET ANSI_UNDERLINE_RED"'%c'"ANSI_RESET_ALL ANSI_COLOR_YELLOW_BRIGHT" is not present.\n"ANSI_COLOR_RESET, letter);
+                printf(ANSI_COLOR_YELLOW_BRIGHT "The letter " ANSI_COLOR_RESET ANSI_UNDERLINE_RED "'%c'" ANSI_RESET_ALL ANSI_COLOR_YELLOW_BRIGHT " is not present.\n" ANSI_COLOR_RESET, letter);
                 remainingAttempts--;
             }
         }
@@ -107,10 +107,10 @@ int main() {
         /*check if win based on the function whether you win or lose also printing how many attempts you made*/
         if (checkWin(word, guessedLetters)) {
             hangingMan(remainingAttempts);
-            printf(ANSI_COLOR_YELLOW_BRIGHT"\nCongratulations! You guessed the word: "ANSI_COLOR_RESET ANSI_UNDERLINE_GREEN"%s\n\n"ANSI_RESET_ALL, word);
+            printf(ANSI_COLOR_YELLOW_BRIGHT "\nCongratulations! You guessed the word: " ANSI_COLOR_RESET ANSI_UNDERLINE_GREEN "%s\n\n" ANSI_RESET_ALL, word);
         } else {
             hangingMan(remainingAttempts);
-            printf(ANSI_COLOR_YELLOW_BRIGHT"\nSorry, you lost. The word was: "ANSI_COLOR_RESET ANSI_UNDERLINE_RED"%s\n\n"ANSI_RESET_ALL, word);
+            printf(ANSI_COLOR_YELLOW_BRIGHT "\nSorry, you lost. The word was: " ANSI_COLOR_RESET ANSI_UNDERLINE_RED "%s\n\n" ANSI_RESET_ALL, word);
         }
 
         menu();
@@ -142,60 +142,60 @@ void refresh() {
 void hangingMan(int remainingAttempts) {
     switch (remainingAttempts) {
         case 6:
-            printf(ANSI_COLOR_YELLOW"   _____\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_RED"|\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"__|__\n"ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "   _____\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_RED "|\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "__|__\n" ANSI_COLOR_RESET);
             break;
         case 5:
-            printf(ANSI_COLOR_YELLOW"   _____\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_RED"|\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_PINK"O\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"__|__\n"ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "   _____\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_RED "|\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_PINK "O\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "__|__\n" ANSI_COLOR_RESET);
             break;
         case 4:
-            printf(ANSI_COLOR_YELLOW"   _____\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_RED"|\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_PINK"O\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_PINK"|\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"__|__\n"ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "   _____\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_RED "|\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_PINK "O\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_PINK "|\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "__|__\n" ANSI_COLOR_RESET);
             break;
         case 3:
-            printf(ANSI_COLOR_YELLOW"   _____\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_RED"|\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_PINK"O\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |    "ANSI_COLOR_RESET ANSI_COLOR_PINK"/|\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"__|__\n"ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "   _____\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_RED "|\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_PINK "O\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |    " ANSI_COLOR_RESET ANSI_COLOR_PINK "/|\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "__|__\n" ANSI_COLOR_RESET);
             break;
         case 2:
-            printf(ANSI_COLOR_YELLOW"   _____\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_RED"|\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_PINK"O\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |    "ANSI_COLOR_RESET ANSI_COLOR_PINK"/|\\\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"__|__\n"ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "   _____\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_RED "|\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_PINK "O\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |    " ANSI_COLOR_RESET ANSI_COLOR_PINK "/|\\\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "__|__\n" ANSI_COLOR_RESET);
             break;
         case 1:
-            printf(ANSI_COLOR_YELLOW"   _____\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_RED"|\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_PINK"O\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |    "ANSI_COLOR_RESET ANSI_COLOR_PINK"/|\\\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |    "ANSI_COLOR_RESET ANSI_COLOR_PINK"/ \n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"__|__\n"ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "   _____\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_RED "|\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_PINK "O\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |    " ANSI_COLOR_RESET ANSI_COLOR_PINK "/|\\\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |    " ANSI_COLOR_RESET ANSI_COLOR_PINK "/ \n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "__|__\n" ANSI_COLOR_RESET);
             break;
         case 0:
-            printf(ANSI_COLOR_YELLOW"   _____\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_RED"|\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |     "ANSI_COLOR_RESET ANSI_COLOR_PINK"O\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |    "ANSI_COLOR_RESET ANSI_COLOR_PINK"/|\\\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"  |    "ANSI_COLOR_RESET ANSI_COLOR_PINK"/ \\\n"ANSI_COLOR_RESET);
-            printf(ANSI_COLOR_YELLOW"__|__\n"ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "   _____\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_RED "|\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |     " ANSI_COLOR_RESET ANSI_COLOR_PINK "O\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |    " ANSI_COLOR_RESET ANSI_COLOR_PINK "/|\\\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "  |    " ANSI_COLOR_RESET ANSI_COLOR_PINK "/ \\\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_YELLOW "__|__\n" ANSI_COLOR_RESET);
             break;
     }
 }
@@ -203,9 +203,9 @@ void hangingMan(int remainingAttempts) {
 /*this function enters a letter*/
 char enterLetter() {
     char l;
-    printf(ANSI_COLOR_GRAY"Guess a letter: "ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_GRAY "Guess a letter: " ANSI_COLOR_RESET);
     scanf(" %c", &l);
-    while (getchar() != '\n');  
+    while (getchar() != '\n');
     return l;
 }
 
@@ -214,17 +214,17 @@ void initializeHiddenWord(int length, char hiddenWord[]) {
     for (int i = 0; i < length; i++) {
         hiddenWord[i] = '-';
     }
-    hiddenWord[length] = '\0'; 
+    hiddenWord[length] = '\0';
 }
 
 /*this function enters a word and checks that it does not exceed the maximum characters*/
 void enterWord(char word[]) {
     do {
-        printf(ANSI_COLOR_GRAY"Enter the word to guess "ANSI_COLOR_RESET ANSI_UNDERLINE_RED"(max %d characters)"ANSI_RESET_ALL ANSI_COLOR_GRAY": "ANSI_COLOR_RESET, MAX_LETTERS);
+        printf(ANSI_COLOR_GRAY "Enter the word to guess " ANSI_COLOR_RESET ANSI_UNDERLINE_RED "(max %d characters)" ANSI_RESET_ALL ANSI_COLOR_GRAY ": " ANSI_COLOR_RESET, MAX_LETTERS);
         scanf("%s", word);
         refresh();
         if (strlen(word) > MAX_LETTERS) {
-            printf(ANSI_UNDERLINE_RED"The entered word exceeds the maximum allowed length!\n"ANSI_RESET_ALL);
+            printf(ANSI_UNDERLINE_RED "The entered word exceeds the maximum allowed length!\n" ANSI_RESET_ALL);
         }
     } while (strlen(word) > MAX_LETTERS);
 }
@@ -233,20 +233,20 @@ void enterWord(char word[]) {
 int letterAlreadyGuessed(char letter, char guessedLetters[], int length) {
     for (int i = 0; i < length; i++) {
         if (guessedLetters[i] == letter) {
-            return 1; 
+            return 1;
         }
     }
-    return 0; 
+    return 0;
 }
 
 /*this function checks if the letter is present in the word*/
 int checkLetter(char letter, char word[], int length) {
     for (int i = 0; i < length; i++) {
         if (word[i] == letter) {
-            return 1; 
+            return 1;
         }
     }
-    return 0; 
+    return 0;
 }
 
 /*this function updates the vector containing the letters used previously*/
@@ -261,7 +261,7 @@ void updateGuessedLetters(char letter, char word[], char guessedLetters[], int l
 /*this function checks if you have won or lost by comparing the words*/
 int checkWin(char word[], char guessedLetters[]) {
     if (strcmp(word, guessedLetters) == 0) {
-        return 1; 
+        return 1;
     }
     return 0;
 }
@@ -282,7 +282,7 @@ void resizeWord(char word[], int length) {
 int checkCharacter(char letter) {
     if ((letter < 65 || letter > 90) && (letter < 97 || letter > 122)) {
         return 1;
-    }else{
+    } else {
         return 0;
     }
 }
@@ -313,7 +313,7 @@ int startGame(char choice) {
 
 /*print game menu*/
 void menu() {
-    printf(ANSI_COLOR_GRAY"[1]"ANSI_COLOR_RESET ANSI_COLOR_YELLOW" Start Game\n"ANSI_COLOR_RESET);
-    printf(ANSI_COLOR_GRAY"[0]"ANSI_COLOR_RESET ANSI_COLOR_RED" Exit\n\n"ANSI_COLOR_RESET);
-    printf(ANSI_COLOR_GRAY"Enter choice: "ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_GRAY "[1]" ANSI_COLOR_RESET ANSI_COLOR_YELLOW " Start Game\n" ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_GRAY "[0]" ANSI_COLOR_RESET ANSI_COLOR_RED " Exit\n\n" ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_GRAY "Enter choice: " ANSI_COLOR_RESET);
 }
