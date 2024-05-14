@@ -43,8 +43,8 @@ int main() {
     char guessedLetters[MAX_LETTERS]; /*hidden word*/
     char previouslyGuessedLetters[26]; /*repeated letters*/
     char letter;
-    int remainingAttempts = MAX_ATTEMPTS;
-    int repeatedWordCount = 0;
+    int remainingAttempts;
+    int repeatedWordCount;
     int length, gameChoice;
 
     printf(ANSI_COLOR_GRAY "Welcome to the Hangman game\n\n" ANSI_COLOR_RESET);
@@ -53,6 +53,8 @@ int main() {
 
     while (gameChoice == 1) {
         refresh();
+        remainingAttempts = MAX_ATTEMPTS;
+        repeatedWordCount = 0;
         do {
             enterWord(word);
 
@@ -115,13 +117,6 @@ int main() {
 
         menu();
         gameChoice = startGame(gameChoice);
-
-        if (gameChoice == 1) {
-            remainingAttempts = MAX_ATTEMPTS;
-            repeatedWordCount = 0;
-            memset(word, 0, sizeof(word));
-            memset(guessedLetters, 0, sizeof(guessedLetters));
-            memset(previouslyGuessedLetters, 0, sizeof(previouslyGuessedLetters));
         }
     }
     return 0;
