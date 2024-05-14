@@ -117,7 +117,6 @@ int main() {
 
         menu();
         gameChoice = startGame(gameChoice);
-        }
     }
     return 0;
 }
