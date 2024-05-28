@@ -205,7 +205,10 @@ void drawHangman(int remainingAttempts) {
 
 /*this function displays the menu*/
 void menu() {
-    printf(ANSI_COLOR_YELLOW_BRIGHT "Menu\n1. New Game\n2. Information\n0. Exit\n" ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_GRAY "[2]" ANSI_COLOR_RESET ANSI_COLOR_PINK " Information" ANSI_COLOR_RESET "\n");
+    printf(ANSI_COLOR_GRAY "[1]" ANSI_COLOR_RESET ANSI_COLOR_YELLOW " Start Game" ANSI_COLOR_RESET "\n");
+    printf(ANSI_COLOR_GRAY "[0]" ANSI_COLOR_RESET ANSI_COLOR_RED " Exit" ANSI_COLOR_RESET "\n\n");
+    printf(ANSI_COLOR_GRAY "Enter your choice: " ANSI_COLOR_RESET);
 }
 
 /*this function displays the information about the game*/
