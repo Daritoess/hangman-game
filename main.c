@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <time.h>
 
 /*colors*/
 #define ANSI_COLOR_PINK "\x1b[95m"
@@ -22,108 +21,118 @@
 
 /*function declarations*/
 void menu();
-int startGame(char choice);
+void information();
+int choice(char choice); 
 int checkCharacter(char letter);
 int checkWordCharacters(char word[], int length);
 char resizeLetter(char letter);
 void resizeWord(char word[], int length);
 void refresh();
-void hangingMan(int remainingAttempts);
-char enterLetter();
+void drawHangman(int remainingAttempts);
+char insertLetter();
 void initializeHiddenWord(int length, char hiddenWord[]);
-void enterWord(char word[]);
-int letterAlreadyGuessed(char letter, char guessedLetters[], int length);
+void insertWord(char word[]);
+int isLetterAlreadyGuessed(char letter, char guessedLetters[], int length);
 int checkLetter(char letter, char word[], int length);
 void updateGuessedLetters(char letter, char word[], char guessedLetters[], int length);
-int checkWin(char word[], char guessedLetters[]);
+int checkVictory(char word[], char guessedLetters[]);
 
 /*main*/
 int main() {
-    char word[MAX_LETTERS]; /*word to be guessed*/
-    char guessedLetters[MAX_LETTERS]; /*hidden word*/
-    char previouslyGuessedLetters[26]; /*repeated letters*/
+    char word[MAX_LETTERS];/*word to guess*/
+    char guessedLetters[MAX_LETTERS];/*hidden word*/
+    char previouslyGuessedLetters[26];/*repeated letters*/
     char letter;
     int remainingAttempts;
-    int repeatedWordCount;
+    int repeatLetterCount;
     int length, gameChoice;
 
-    printf(ANSI_COLOR_GRAY "Welcome to the Hangman game\n\n" ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_GRAY "==Welcome to Hangman==\n==Windows-Linux==\n" ANSI_COLOR_RESET "\n\n");
     menu();
-    gameChoice = startGame(gameChoice);
+    gameChoice = choice(gameChoice);
 
-    while (gameChoice == 1) {
-        refresh();
-        remainingAttempts = MAX_ATTEMPTS;
-        repeatedWordCount = 0;
-        do {
-            enterWord(word);
+    while (gameChoice > 0) {
+        if (gameChoice == 2) {
+            refresh();
+            information();
+            menu();
+            gameChoice = choice(gameChoice);
+        }
 
-            length = strlen(word);
-            if (checkWordCharacters(word, length) == 1) {
-                refresh();
-                printf(ANSI_UNDERLINE_RED "The word contains characters not suitable for the game. Enter a word that contains alphabet letters!" ANSI_COLOR_RESET "\n");
-            }
-        } while (checkWordCharacters(word, length) == 1);
-
-        resizeWord(word, length);
-        initializeHiddenWord(length, guessedLetters);
-        refresh();
-
-        /*the loop that determines the actual game based on remaining attempts and checking if you haven't guessed the word*/
-        while (remainingAttempts > 0 && !checkWin(word, guessedLetters)) {
+        while (gameChoice == 1) {
+            refresh();
+            remainingAttempts = MAX_ATTEMPTS;
+            repeatLetterCount = 0;
             do {
-                hangingMan(remainingAttempts);
-                printf("\n" ANSI_COLOR_YELLOW_BRIGHT "Word: %s" ANSI_COLOR_RESET "\n", guessedLetters);
+                insertWord(word);
 
-                letter = enterLetter();
-
-                if (checkCharacter(letter) == 1) {
+                length = strlen(word);
+                if (checkWordCharacters(word, length) == 1) {
                     refresh();
-                    printf(ANSI_UNDERLINE_RED "The character entered is not suitable for the game. Enter an alphabet letter!" ANSI_RESET_ALL "\n");
+                    printf(ANSI_UNDERLINE_RED "The word contains invalid characters. Please enter a word that contains alphabetic letters only!" ANSI_COLOR_RESET "\n");
                 }
-            } while (checkCharacter(letter) == 1);
+            } while (checkWordCharacters(word, length) == 1);
 
-            letter = resizeLetter(letter);
+            resizeWord(word, length);
+            initializeHiddenWord(length, guessedLetters);
+            refresh();
 
-            if (letterAlreadyGuessed(letter, previouslyGuessedLetters, repeatedWordCount)) {
-                refresh();
-                printf(ANSI_UNDERLINE_RED "You have already entered this letter previously. Enter another letter!" ANSI_RESET_ALL "\n");
-                continue;
+            /*the main game loop based on remaining attempts and checking if the word is not guessed yet*/
+            while (remainingAttempts > 0 && !checkVictory(word, guessedLetters)) {
+                do {
+                    drawHangman(remainingAttempts);
+                    printf("\n" ANSI_COLOR_YELLOW_BRIGHT "Word: %s" ANSI_COLOR_RESET "\n", guessedLetters);
+
+                    letter = insertLetter();
+
+                    if (checkCharacter(letter) == 1) {
+                        refresh();
+                        printf(ANSI_UNDERLINE_RED "The entered character is not valid. Please enter an alphabetic letter!" ANSI_RESET_ALL "\n");
+                    }
+                } while (checkCharacter(letter) == 1);
+
+                letter = resizeLetter(letter);
+
+                if (isLetterAlreadyGuessed(letter, previouslyGuessedLetters, repeatLetterCount)) {
+                    refresh();
+                    printf(ANSI_UNDERLINE_RED "You have already guessed this letter. Please enter another letter!" ANSI_RESET_ALL "\n");
+                    continue;
+                }
+
+                previouslyGuessedLetters[repeatLetterCount] = letter;
+                repeatLetterCount++;
+
+                if (checkLetter(letter, word, length)) {
+                    refresh();
+                    printf(ANSI_COLOR_YELLOW_BRIGHT "The letter " ANSI_COLOR_RESET ANSI_UNDERLINE_GREEN "'%c'" ANSI_RESET_ALL ANSI_COLOR_YELLOW_BRIGHT " is in the word!" ANSI_COLOR_RESET "\n", letter);
+                    updateGuessedLetters(letter, word, guessedLetters, length);
+                } else {
+                    refresh();
+                    printf(ANSI_COLOR_YELLOW_BRIGHT "The letter " ANSI_COLOR_RESET ANSI_UNDERLINE_RED "'%c'" ANSI_RESET_ALL ANSI_COLOR_YELLOW_BRIGHT " is not in the word." ANSI_COLOR_RESET "\n", letter);
+                    remainingAttempts--;
+                }
             }
+            refresh();
 
-            previouslyGuessedLetters[repeatedWordCount] = letter;
-            repeatedWordCount++;
-
-            if (checkLetter(letter, word, length)) {
-                refresh();
-                printf(ANSI_COLOR_YELLOW_BRIGHT "The letter " ANSI_COLOR_RESET ANSI_UNDERLINE_GREEN "'%c'" ANSI_RESET_ALL ANSI_COLOR_YELLOW_BRIGHT " is present!" ANSI_COLOR_RESET "\n", letter);
-                updateGuessedLetters(letter, word, guessedLetters, length);
+            /*checking if the player won or lost and displaying the result*/
+            if (checkVictory(word, guessedLetters)) {
+                drawHangman(remainingAttempts);
+                printf("\n" ANSI_COLOR_YELLOW_BRIGHT "Congratulations! You guessed the word: " ANSI_COLOR_RESET ANSI_UNDERLINE_GREEN "%s" ANSI_RESET_ALL "\n\n", word);
             } else {
-                refresh();
-                printf(ANSI_COLOR_YELLOW_BRIGHT "The letter " ANSI_COLOR_RESET ANSI_UNDERLINE_RED "'%c'" ANSI_RESET_ALL ANSI_COLOR_YELLOW_BRIGHT " is not present." ANSI_COLOR_RESET "\n", letter);
-                remainingAttempts--;
+                drawHangman(remainingAttempts);
+                printf("\n" ANSI_COLOR_YELLOW_BRIGHT "Sorry, you lost. The word was: " ANSI_COLOR_RESET ANSI_UNDERLINE_RED "%s" ANSI_RESET_ALL "\n\n", word);
             }
-        }
-        refresh();
 
-        /*check if win based on the function whether you win or lose also printing how many attempts you made*/
-        if (checkWin(word, guessedLetters)) {
-            hangingMan(remainingAttempts);
-            printf("\n" ANSI_COLOR_YELLOW_BRIGHT "Congratulations! You guessed the word: " ANSI_COLOR_RESET ANSI_UNDERLINE_GREEN "%s" ANSI_RESET_ALL "\n\n", word);
-        } else {
-            hangingMan(remainingAttempts);
-            printf("\n" ANSI_COLOR_YELLOW_BRIGHT "Sorry, you lost. The word was: " ANSI_COLOR_RESET ANSI_UNDERLINE_RED "%s" ANSI_RESET_ALL "\n\n", word);
+            menu();
+            gameChoice = choice(gameChoice);
         }
-
-        menu();
-        gameChoice = startGame(gameChoice);
     }
     return 0;
 }
 
 /*function definitions*/
 
-/*this function clears the terminal checking if you have windows or an open source*/
+/*this function clears the terminal checking if it's windows or open source*/
 void refresh() {
     #ifdef _WIN32
         system("cls");
@@ -132,8 +141,8 @@ void refresh() {
     #endif
 }
 
-/*this function prints the hangman based on the remaining attempts*/
-void hangingMan(int remainingAttempts) {
+/*this function prints the hangman based on remaining attempts*/
+void drawHangman(int remainingAttempts) {
     switch (remainingAttempts) {
         case 6:
             printf(ANSI_COLOR_YELLOW "   _____" ANSI_COLOR_RESET "\n");
@@ -194,37 +203,107 @@ void hangingMan(int remainingAttempts) {
     }
 }
 
-/*this function enters a letter*/
-char enterLetter() {
-    char l;
-    printf(ANSI_COLOR_GRAY "Guess a letter: " ANSI_COLOR_RESET);
-    scanf(" %c", &l);
-    while (getchar() != '\n');
-    return l;
+/*this function displays the menu*/
+void menu() {
+    printf(ANSI_COLOR_YELLOW_BRIGHT "Menu\n1. New Game\n2. Information\n0. Exit\n" ANSI_COLOR_RESET);
 }
 
-/*this function initializes the hidden word that we will see with this character '-'*/
+/*this function displays the information about the game*/
+void information() {
+    printf(ANSI_COLOR_GRAY
+           "***************************************\n"
+           "* Creator:\n"
+           "  Dario Falcone\n"
+           "\n"
+           "* The Program:\n"
+           "  Simulates a game of Hangman.\n"
+           "\n"
+           "* Rules:\n"
+           "  1. Do not use made-up words.\n"
+           "  2. Avoid using offensive words.\n"
+           "  3. Be respectful to the other player.\n"
+           "  4. Declare only one letter per turn.\n"
+           "  5. To win, find all the letters in the word.\n"
+           "  6. For each incorrect guess, a part of the hangman will be drawn.\n"
+           "  7. If the hangman is fully drawn, you lose.\n"
+           "\n"
+           "* Have Fun!\n"
+           "***************************************\n" ANSI_COLOR_RESET);
+}
+
+/*this function processes the player's choice*/
+int choice(char choice) {
+    int c;
+    char newline;
+    while (1) {
+        printf(ANSI_COLOR_YELLOW_BRIGHT "Enter your choice: " ANSI_COLOR_RESET);
+        if (scanf("%d%c", &c, &newline) != 2 || newline != '\n') {
+            while (getchar() != '\n'); // clear input buffer
+            printf(ANSI_UNDERLINE_RED "Invalid input. Please enter a number between 0 and 2." ANSI_RESET_ALL "\n");
+        } else if (c < 0 || c > 2) {
+            printf(ANSI_UNDERLINE_RED "Invalid choice. Please enter a number between 0 and 2." ANSI_RESET_ALL "\n");
+        } else {
+            return c;
+        }
+    }
+}
+
+/*this function checks if the letter is alphabetic*/
+int checkCharacter(char letter) {
+    if (!isalpha(letter)) {
+        return 1;
+    }
+    return 0;
+}
+
+/*this function checks if the word contains only alphabetic letters*/
+int checkWordCharacters(char word[], int length) {
+    for (int i = 0; i < length; i++) {
+        if (!isalpha(word[i])) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/*this function converts a letter to uppercase*/
+char resizeLetter(char letter) {
+    return toupper(letter);
+}
+
+/*this function converts a word to uppercase*/
+void resizeWord(char word[], int length) {
+    for (int i = 0; i < length; i++) {
+        word[i] = toupper(word[i]);
+    }
+}
+
+/*this function initializes the hidden word with underscores*/
 void initializeHiddenWord(int length, char hiddenWord[]) {
     for (int i = 0; i < length; i++) {
-        hiddenWord[i] = '-';
+        hiddenWord[i] = '_';
     }
     hiddenWord[length] = '\0';
 }
 
-/*this function enters a word and checks that it does not exceed the maximum characters*/
-void enterWord(char word[]) {
-    do {
-        printf(ANSI_COLOR_GRAY "Enter the word to guess " ANSI_COLOR_RESET ANSI_UNDERLINE_RED "(max %d characters)" ANSI_RESET_ALL ANSI_COLOR_GRAY ": " ANSI_COLOR_RESET, MAX_LETTERS);
-        scanf("%s", word);
-        refresh();
-        if (strlen(word) > MAX_LETTERS) {
-            printf(ANSI_UNDERLINE_RED "The entered word exceeds the maximum allowed length!" ANSI_RESET_ALL "\n");
-        }
-    } while (strlen(word) > MAX_LETTERS);
+/*this function prompts the user to insert a word*/
+void insertWord(char word[]) {
+    printf(ANSI_COLOR_YELLOW_BRIGHT "Enter the word to guess: " ANSI_COLOR_RESET);
+    scanf("%s", word);
+    while (getchar() != '\n'); // clear input buffer
 }
 
-/*this function checks if the letter has been repeated*/
-int letterAlreadyGuessed(char letter, char guessedLetters[], int length) {
+/*this function prompts the user to insert a letter*/
+char insertLetter() {
+    char letter;
+    printf(ANSI_COLOR_YELLOW_BRIGHT "Enter a letter: " ANSI_COLOR_RESET);
+    scanf(" %c", &letter);
+    while (getchar() != '\n'); // clear input buffer
+    return letter;
+}
+
+/*this function checks if the letter is already guessed*/
+int isLetterAlreadyGuessed(char letter, char guessedLetters[], int length) {
     for (int i = 0; i < length; i++) {
         if (guessedLetters[i] == letter) {
             return 1;
@@ -233,7 +312,7 @@ int letterAlreadyGuessed(char letter, char guessedLetters[], int length) {
     return 0;
 }
 
-/*this function checks if the letter is present in the word*/
+/*this function checks if the letter is in the word*/
 int checkLetter(char letter, char word[], int length) {
     for (int i = 0; i < length; i++) {
         if (word[i] == letter) {
@@ -243,7 +322,7 @@ int checkLetter(char letter, char word[], int length) {
     return 0;
 }
 
-/*this function updates the vector containing the letters used previously*/
+/*this function updates the guessed letters*/
 void updateGuessedLetters(char letter, char word[], char guessedLetters[], int length) {
     for (int i = 0; i < length; i++) {
         if (word[i] == letter) {
@@ -252,62 +331,7 @@ void updateGuessedLetters(char letter, char word[], char guessedLetters[], int l
     }
 }
 
-/*this function checks if you have won or lost by comparing the words*/
-int checkWin(char word[], char guessedLetters[]) {
-    if (strcmp(word, guessedLetters) == 0) {
-        return 1;
-    }
-    return 0;
-}
-
-/*this function resizes the letter from uppercase to lowercase*/
-char resizeLetter(char letter) {
-    return letter = tolower(letter);
-}
-
-/*this function resizes the word from uppercase to lowercase*/
-void resizeWord(char word[], int length) {
-    for (int i = 0; i < length; i++) {
-        word[i] = tolower(word[i]);
-    }
-}
-
-/*this function checks that characters outside of the uppercase and lowercase alphabet are not entered*/
-int checkCharacter(char letter) {
-    if ((letter < 65 || letter > 90) && (letter < 97 || letter > 122)) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
-/*this function checks that characters outside of the uppercase and lowercase alphabet of a word are not entered*/
-int checkWordCharacters(char word[], int length) {
-    for (int i = 0; i < length; i++) {
-        if ((word[i] < 65 || word[i] > 90) && (word[i] < 97 || word[i] > 122)) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-/*this function starts a game*/
-int startGame(char choice) {
-    do {
-        scanf("%c", &choice);
-        while (getchar() != '\n');
-        refresh();
-        if (choice < 48 || choice > 49) {
-            printf(ANSI_UNDERLINE_RED "Invalid choice entered. Enter 1 or 0!" ANSI_RESET_ALL "\n\n");
-            menu();
-        }
-    } while (choice < 48 || choice > 49);
-    return choice - 48;
-}
-
-/*print game menu*/
-void menu() {
-    printf(ANSI_COLOR_GRAY "[1]" ANSI_COLOR_RESET ANSI_COLOR_YELLOW "Start Game" ANSI_COLOR_RESET "\n");
-    printf(ANSI_COLOR_GRAY "[0]" ANSI_COLOR_RESET ANSI_COLOR_RED "Exit" ANSI_COLOR_RESET "\n\n");
-    printf(ANSI_COLOR_GRAY "Enter choice: " ANSI_COLOR_RESET);
+/*this function checks if the player has guessed the word*/
+int checkVictory(char word[], char guessedLetters[]) {
+    return strcmp(word, guessedLetters) == 0;
 }
